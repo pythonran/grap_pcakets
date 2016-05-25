@@ -1,0 +1,30 @@
+'''
+The capture module build with:
+
+	Centos6.7
+	
+	python 2.7.11
+	
+	scapy
+
+	mysql
+
+	MySQLdb
+
+	
+Some files intention:
+
+	/tmp/.EasyScapy/db.log   		--------> Profiles to mysql
+
+	/tmp/.EasyScapy/outsniff.log  		--------> Output file to moniter
+
+	/tmp/.EasyScapy/expid.pid     		--------> The process's pid 
+	
+	/tmp/.EasyScapy/pcapfiles		--------> Save pcapfiles
+
+	controls				--------> The setup scripts:
+								
+								sudo chown root controls
+								sudo chmod +s controls
+
+'''
