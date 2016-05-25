@@ -2,14 +2,20 @@
 The capture module build with:
 
 	Centos6.7
+
+    django1.6.5
+
+    djangorestframework==2.4.5
 	
 	python 2.7.11
 	
 	scapy
 
-	mysql
+	mysql5.1.73
 
 	MySQLdb
+    
+    pythark
 
 	
 Some files intention:
