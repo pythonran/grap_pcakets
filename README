@@ -20,17 +20,53 @@ The capture module build with:
 	
 Some files intention:
 
-	/tmp/.EasyScapy/db.log   		--------> Profiles to mysql
+	/tmp/.EasyScapy/db.log   		    --------> Profiles to mysql
+        
+        host=127.0.0.1
+        user=root
+        passwd=123
+        db=excample
 
 	/tmp/.EasyScapy/outsniff.log  		--------> Output file to moniter
 
 	/tmp/.EasyScapy/expid.pid     		--------> The process's pid 
 	
-	/tmp/.EasyScapy/pcapfiles		--------> Save pcapfiles
+	/tmp/.EasyScapy/pcapfiles		    --------> Save pcapfiles
 
-	controls				--------> The setup scripts:
+	controls				            --------> The setup scripts:
 								
 								sudo chown root controls
 								sudo chmod +s controls
+    
+    /tmp/.EasyScapy/filter.dat          --------> Formal version used to filter the eight teams IP address file
+
+Test:
+
+    setup sniffer : [user@localhost$] ./controls python /tmp/Sniff/start_sniff.py start test
+
+                    [root@localhost#] python /tmp/Sniff/start_sniff.py start test
+
+    stop sniffer :  python /tmp/Sniff/start_sniff.py stop
+
+
+    Django:
+
+         postjson.py file can control the sniffer script
+
+            value = {
+                'status':'start' #---->setup sniffer
+                'pktcs':2000
+                'count':
+                ...
+            }
+
+
+        deljson.py file can send delete request to site
+
+
+
+
+
+
 
 '''

@@ -7,10 +7,11 @@ import exceptions
 import signal
 
 s = None
+testcode = False
 
 class single_sniff(daemon.Daemon):
 
-    def __init__(self, sfilter="src not 127.0.0.1 and dst not 127.0.0.1", count=-1, pktcs=0, filesize=0):
+    def __init__(self, sfilter="", count=-1, pktcs=0, filesize=0):
 
         super(single_sniff,self).__init__()
         self.sfilter = sfilter
@@ -45,7 +46,7 @@ class single_sniff(daemon.Daemon):
 
         try:
 
-            print self.sfilter,"1"
+            #print self.sfilter,"1"
 
             if self.sfilter != '':
 
@@ -54,7 +55,7 @@ class single_sniff(daemon.Daemon):
 
             else:
 
-                print self.sfilter,"3"
+                #print self.sfilter,"3"
                 sniff(prn = self.wto_pcap)
 
         except exceptions.Exception,e:
@@ -75,6 +76,8 @@ class single_sniff(daemon.Daemon):
 
 
         if self.pkt_count < self.pktcs and self.filename != '':
+
+            print "Dropped %d packages \n" % self.drop_count
 
             print "\n=====>Truncted pktcs = %d" % self.pkt_count
 
@@ -99,22 +102,23 @@ class single_sniff(daemon.Daemon):
             if connectdb.localhost not in (pkt[IP].src,pkt[IP].dst):
 
                 filter_ip = (pkt[IP].src,pkt[IP].dst)
-            #filter_port = (pkt[TCP].port,)
-            filter_ip = set(filter_ip)
+                filter_ip = set(filter_ip)
+                s1 = filter_ip | set(['test'])
+            else:
+                filter_ip = set([0])
+                s1 = set(['test'])
 
         except:
 
             filter_ip = set(["ipv6 or arp"])
+            s1 = filter_ip | set(['test'])
+        #print testcode
+        if not testcode:
+            s1 = set(readfilter.readfilter()["ip"])
 
+        if pkt.time < self.nowtimesamp or not filter_ip < s1:
 
-        #s1 = set(readfilter.readfilter()["ip"])
-        #print s1
-        #print filter_ip
-
-        if pkt.time < self.nowtimesamp:# or not filter_ip < s1:
-
-            print "drop it"
-            self.drop_count += 1
+                self.drop_count += 1
 
         else:#valid packets
 
@@ -136,7 +140,6 @@ class single_sniff(daemon.Daemon):
                 putdb(self.id,self.filename,self.stime,self.otime,self.filesize,self.pkt_count)
                 self.filename = ''
                 self.pkt_count = 0
-                self.drop_count = 0
 
             else:
 
@@ -182,7 +185,7 @@ def putdb(id,f,s,o,fs,pc):
 
 def manage(*args):
 
-    global s
+    global s,testcode
 
     filter = ''
     pktcs = 0
@@ -213,6 +216,10 @@ def manage(*args):
                 if filesize > 0:
 
                     filesize = filesize * 1024 * 1024
+            elif "test" in params:
+                 #print testcode
+                 testcode = True
+                 #print "changed--->",testcode
 
             else:
 
@@ -226,8 +233,8 @@ def manage(*args):
 
     elif not pktcs and not filesize:
 
-        print "please set pktcs or filesize to per pcapfile!"
-        pktcs = 300
+        print "pktcs doesn't set,will use default 1000"
+        pktcs = 1000
         filesize = 0
 
     else:

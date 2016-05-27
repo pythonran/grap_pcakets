@@ -13,6 +13,7 @@ def connection(host='127.0.0.1',user='root',passwd='',db='EasyCloud'):
     while 1:
 
         try:
+
             conn = MySQLdb.connect(host=params[0],user=params[1],passwd=params[2],db=params[3])
             break
 
@@ -27,14 +28,8 @@ def connection(host='127.0.0.1',user='root',passwd='',db='EasyCloud'):
             elif de[0] in account_error:
 
                 params = read_account()
-
-            if params == -1:
-
-                return -1
-
             else:
-
-                print de,"The sniff exit..."
+                print de
                 sys.exit(1)
 
     cur = conn.cursor()
@@ -58,7 +53,20 @@ def connection(host='127.0.0.1',user='root',passwd='',db='EasyCloud'):
 
 def create_db(p):
 
-    conn = MySQLdb.connect(host=p[0],user=p[1],passwd=p[2])
+    #params = []
+    print p
+    while 1:
+
+        try:
+
+            conn = MySQLdb.connect(host=p[0],user=p[1],passwd=p[2])
+            break
+
+        except MySQLdb.DatabaseError,err:
+
+            print err,"--->it'll read the db.log to get passwd!\n'"
+            p = read_account()
+
     create_sql = "create database %s;" % p[3]
     cur = conn.cursor()
     cur.execute(create_sql)
@@ -87,10 +95,10 @@ def read_account():
     except IOError,er:
 
         print er,'''\nplease set /tmp/.db.log file to connect db.Ex:
-			                host="127.0.0.1
-			                user="root"
-			                passwd=""
-			                db="ex"
+			                host=127.0.0.1
+			                user=root
+			                passwd=oldpassword
+			                db=ex
 	                    '''
         sys.exit(0)
 
