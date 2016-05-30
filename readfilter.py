@@ -39,9 +39,6 @@ def readfilter():
 #print readfilter()
 
 
-#def gfilter():
-
-#    pass
 
 
 

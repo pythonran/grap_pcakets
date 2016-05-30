@@ -1,16 +1,31 @@
 import daemon
-from scapy.all import *
 import MySQLdb
 import connectdb,readfilter
-import time
+import time,os,sys
 import exceptions
 import signal
+#import delipv6
+#if not os.path.exists("/tmp/Sniff/.all.back"):
+#    delipv6.annotation()
+import socket
+socket.has_ipv6 = False
+from scapy.all import *
 
 s = None
 testcode = False
 
 class single_sniff(daemon.Daemon):
+    '''
+    Sniffer singleton.
 
+    sfilter: The filter for scapy--->sniff()
+    id: The index of captured files
+    pkt_count: The actual count of packages by scapy--->sniff() captured
+    pktcs: The number for packages to save a pcapfile,deafault:1000
+    stime: The sniff_timescamp of the first package in the pcapfile
+    otime: The sniff_timescamp of the last package in the pcapfile
+
+    '''
     def __init__(self, sfilter="", count=-1, pktcs=0, filesize=0):
 
         super(single_sniff,self).__init__()
@@ -154,7 +169,9 @@ class single_sniff(daemon.Daemon):
 
 
 def putdb(id,f,s,o,fs,pc):
-
+    '''
+    push some attributes of pcapfile to mysqldb.
+    '''
     conn = connectdb.connection()
     filepath = "'" + f.split('/')[-1] + "'"
     cur = conn.cursor()
@@ -184,7 +201,9 @@ def putdb(id,f,s,o,fs,pc):
 
 
 def manage(*args):
-
+    '''
+    control the cmdline params.
+    '''
     global s,testcode
 
     filter = ''
@@ -261,7 +280,9 @@ def manage(*args):
 
 
 def send_stop():
-
+    '''
+    stop the sniffer singleton
+    '''
     print "stop signal"
 
     if os.path.exists("/tmp/.EasyScapy/expid.pid"):
@@ -286,6 +307,7 @@ def send_stop():
 
 
 if __name__ == "__main__":
+
 
     if len(sys.argv) >= 2:
 

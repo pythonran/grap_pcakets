@@ -1,5 +1,3 @@
-from scapy.all import *
-from django.http import HttpResponse
 import os,sys,atexit,signal
 
 class Daemon(object):
@@ -51,7 +49,7 @@ class Daemon(object):
         sys.stdout.flush()
         sys.stderr.flush()
         si = file(self.stdin,'r')
-        
+
         self.so = file(self.stdout,'a+')
         self.se = file(self.stderr,'a+',0)
         sys.stdout = self.so
@@ -79,7 +77,7 @@ class Daemon(object):
         pass
 
     def stop(self):
-	
+
         sys.stdout = self.saveout
         sys.stderr = self.saveerr
         self.so.close()
